@@ -10,10 +10,7 @@ namespace BulkyBook.Models
 {
     public class ShoppingCart
     {
-        public ShoppingCart()
-        {
-            Count = 1;
-        }
+
 
         [Key]
         public int Id { get; set; }
@@ -34,6 +31,11 @@ namespace BulkyBook.Models
         [NotMapped]
         public double Price { get; set; }
 
+
+        public ShoppingCart()
+        {
+            Count = 1;
+        }
 
     }
 }
