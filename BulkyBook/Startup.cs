@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,7 @@ namespace BulkyBook
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddSingleton<IEmailSender, EmailSender>();
             services.Configure<EmailOptions>(Configuration);
+            services.Configure<StripeSettings>(Configuration.GetSection("Stripe"));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddControllersWithViews();
             services.AddRazorPages();
@@ -58,8 +60,8 @@ namespace BulkyBook
 
             services.AddAuthentication().AddGoogle(options =>
             {
-                options.ClientId = "748418167397-p8ue7543b6eiqsmandhju0l8m3puuja9.apps.googleusercontent.com";
-                options.ClientSecret = "qUY-JvQx1pNN6VoMpWDm14si";
+                options.ClientId = Configuration["Google:ClientId"];
+                options.ClientSecret = Configuration["Google:ClientSecret"];
             });
             services.AddSession(options =>
             {
@@ -88,6 +90,7 @@ namespace BulkyBook
             app.UseStaticFiles();
 
             app.UseRouting();
+            StripeConfiguration.ApiKey = Configuration.GetSection("Stripe")["SecretKey"];
             app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
