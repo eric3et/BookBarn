@@ -22,6 +22,7 @@ namespace BulkyBook
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                }); 
+
     }
 }
