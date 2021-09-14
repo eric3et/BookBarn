@@ -24,23 +24,25 @@ namespace BulkyBook
     public class Startup
     {
 
+        public IConfiguration Configuration { get; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-
+                    Configuration.GetSection("ConnectionStrings")["DefaultConnection"]
+                    ));
+                    
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddIdentity<IdentityUser,IdentityRole>().AddDefaultTokenProviders()
+            services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddSingleton<IEmailSender, EmailSender>();
             services.Configure<EmailOptions>(Configuration);
@@ -64,8 +66,8 @@ namespace BulkyBook
 
             services.AddAuthentication().AddGoogle(options =>
             {
-                options.ClientId = Configuration["Google:ClientId"];
-                options.ClientSecret = Configuration["Google:ClientSecret"];
+                options.ClientId = Configuration.GetSection("Google")["ClientID"];
+                options.ClientSecret = Configuration.GetSection("Google")["ClientSecret"];
             });
             services.AddSession(options =>
             {
